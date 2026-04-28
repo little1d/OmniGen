@@ -1,20 +1,21 @@
-# OmniGen
+# SpectrumAnnotator
+SupportInfo-Crawl data is available under `crawl_data`.
 
-A flexible data generation framework for creating high-quality machine learning training data. OmniGen supports multiple data types including benchmarks, image-text pairs, question-answer pairs, and chain-of-thought reasoning data.
+A flexible data generation framework for creating high-quality machine learning training data. SpectrumAnnotator supports multiple data types including benchmarks, image-text pairs, question-answer pairs, and chain-of-thought reasoning data.
 
 ## Quick Start
 
 ### 1. Installation
 
 ```bash
-git clone <https://github.com/little1d/OmniGen>
-cd OmniGen
+git clone <https://github.com/little1d/SpectrumAnnotator>
+cd SpectrumAnnotator
 pip install -e .
 ```
 
 ### 2. Configuration
 
-OmniGen supports multiple data generation types. Here are some example configurations:
+SpectrumAnnotator supports multiple data generation types. Here are some example configurations:
 
 #### Image-Text Pair Generation
 
