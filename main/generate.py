@@ -7,6 +7,7 @@ Usage:
     python -m main.generate --type image_pair --data-source "SpectrumWorld/multimodal-spectroscopic-seed-datasets-1000" --samples 5
     python -m main.generate --type cot --config src/config/cot.yaml --output cot_data.json
     python -m main.generate --type qa_pair --config src/config/qa_pair.yaml --output qa_pairs.json
+    python -m main.generate --type sdf_caption --data-source data/sdf_caption
 
     # CoT staged generation
     python -m main.generate --type cot --stages draft --cot-type text_only --samples 500
@@ -51,7 +52,7 @@ async def run_generation(config: OmniGenConfig, data_type: str, input_json: Opti
             use_sequential = True  # Use sequential processing for incremental generation
         else:
             engine.load_dataset()
-            use_sequential = False
+            use_sequential = data_type == "sdf_caption"
 
         # Run generation
         print(f"\n🚀 Starting {data_type} generation...")
@@ -93,6 +94,9 @@ async def run_generation(config: OmniGenConfig, data_type: str, input_json: Opti
                         print(f"   Claude reasoning: {sample.get('claude_thinking_trajectories', 'N/A')[:100]}...")
                     if 'interns1_thinking_trajectories' in sample:
                         print(f"   InternS1 reasoning: {sample.get('interns1_thinking_trajectories', 'N/A')[:100]}...")
+                elif data_type == "sdf_caption":
+                    print(f"   Formula: {sample.get('formula', 'N/A')}")
+                    print(f"   Caption: {sample.get('caption', 'N/A')[:200]}...")
                 else:
                     print(f"   Content: {str(sample)[:200]}...")
 
@@ -116,6 +120,7 @@ Examples:
   python -m main.generate --type benchmark --samples 10
   python -m main.generate --type image_pair --data-source "SpectrumWorld/molpuzzle-seed-datasets" --samples 5
   python -m main.generate --type benchmark --config custom_config.yaml --output my_benchmark.json
+  python -m main.generate --type sdf_caption --data-source data/sdf_caption
         """,
     )
 

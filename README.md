@@ -33,6 +33,32 @@ with ModelHub() as model:
     result = model.generate_with_metadata("What is the result of 1+1?", max_out_len=500)
 ```
 
+## SDF-caption 生成
+
+输入目录按分子 ID 配对：
+
+```text
+data/sdf_caption/
+├── gdb_1.sdf
+├── gdb_1.facts.json
+└── reference.json
+```
+
+`facts.json` 包含 `composition`、`topology` 和 `geometry`。SMILES 可直接写在 facts 中，也可由 `reference.json` 按 `molecule_id` 提供。
+
+```bash
+python -m main.generate \
+  --type sdf_caption \
+  --data-source data/sdf_caption \
+  --output output/sdf_caption.jsonl
+
+python -m main.validate \
+  --type sdf_caption \
+  --file output/sdf_caption.jsonl
+```
+
+模型输入同时包含参考风格、SMILES、verified facts 和当前构象 SDF，模型只输出 `{"caption":"..."}`。生成结果可直接挂载到审核看板。
+
 ## 本地审核
 
 安装 Python 与前端依赖：

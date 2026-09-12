@@ -8,11 +8,11 @@ version = "0.1.0"
 description = "OmniGen"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["httpx>=0.28.1", "openai>=1.97.0", "pillow>=11.3.0", "python-dotenv>=1.1.1"]
+dependencies = ["httpx>=0.28.1", "openai>=1.97.0", "pillow>=11.3.0", "python-dotenv>=1.1.1", "pyyaml>=6.0.2"]
 
 [project.optional-dependencies]
 dashboard = ["fastapi>=0.116.1", "uvicorn>=0.35.0"]
-dev = ["pandas>=2.3.1", "pyarrow>=21.0.0", "pyyaml>=6.0.2"]
+dev = ["pandas>=2.3.1", "pyarrow>=21.0.0"]
 test = ["pytest>=8.4.1", "pytest-asyncio>=1.1.0"]
 
 [project.scripts]

@@ -1,0 +1,27 @@
+dataset_path: data/sdf_caption
+generator_type: sdf_caption
+generator_config:
+  max_out_len: 2048
+  reject_invalid: true
+  overwrite_output: true
+  loader_kwargs: {}
+
+model_type: modelhub
+model_config:
+  ak: ${MODELHUB_AK}
+  endpoint: ${MODELHUB_ENDPOINT}
+  model_name: ${MODELHUB_MODEL_NAME}
+  temperature: 0.6
+  timeout: 120
+
+validation_config:
+  enabled: true
+  output_dir: output/validation
+  verbose: true
+  overall_threshold: 7.0
+  critical_threshold: 5.0
+
+num_samples: 0
+output_path: output/sdf_caption.jsonl
+verbose: true
+max_retries: 2

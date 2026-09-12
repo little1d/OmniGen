@@ -5,6 +5,7 @@ Usage:
     python -m main.validate --type benchmark --file output/benchmark.json
     python -m main.validate --type image_pair --file output/image_pairs.json --output-dir validation_reports
     python -m main.validate --type cot --file output/cot_data.json --config custom_config.yaml
+    python -m main.validate --type sdf_caption --file output/sdf_caption.jsonl
 """
 
 import asyncio
@@ -59,7 +60,7 @@ async def run_validation(config: OmniGenConfig, data_type: str, file_path: str) 
             print(f"   Average score: {avg_score:.2f}/10")
 
             # Show quality distribution from statistics
-            severity_counts = stats.get("severity_counts", {})
+            severity_counts = stats.get("severity_distribution", {})
             excellent = severity_counts.get("excellent", 0)
             good = severity_counts.get("good", 0)
             acceptable = severity_counts.get("acceptable", 0)
@@ -158,6 +159,12 @@ def print_data_type_info(data_type: str) -> None:
             "Image relevance to reasoning (multimodal only)",
             "Logical flow and coherence",
         ],
+        "sdf_caption": [
+            "JSON caption structure",
+            "Molecular formula grounding",
+            "Numeric consistency with verified facts",
+            "Prompt and dataset meta-language leakage",
+        ],
     }
 
     print(f"\n🔍 Validation checks for {data_type} data:")
@@ -175,6 +182,7 @@ Examples:
   python -m main.validate --type benchmark --file output/benchmark.json
   python -m main.validate --type image_pair --file output/image_pairs.json --verbose
   python -m main.validate --type cot --file cot_data.json --output-dir custom_validation
+  python -m main.validate --type sdf_caption --file output/sdf_caption.jsonl
         """,
     )
 

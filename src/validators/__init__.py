@@ -7,6 +7,7 @@ from .benchmark_validator import BenchmarkValidator
 from .cot_validator import CoTValidator
 from .image_pair_validator import ImagePairValidator
 from .qa_pair_validator import QAPairValidator
+from .sdf_caption import SDFCaptionValidator
 
 __all__ = [
     # Base classes
@@ -22,4 +23,5 @@ __all__ = [
     "CoTValidator",
     "ImagePairValidator",
     "QAPairValidator",
+    "SDFCaptionValidator",
 ]

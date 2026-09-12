@@ -116,6 +116,8 @@ class OmniGenEngine:
             raise ValueError("Please load dataset first.")
         if num_samples is None:
             num_samples = self.config.num_samples
+        if num_samples <= 0:
+            num_samples = len(self.dataset)
         if self.config.verbose:
             print(f"Generating {num_samples} samples...")
         generated_data = []
@@ -223,12 +225,18 @@ class OmniGenEngine:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # 确保输出文件为JSON格式
-        if output_path.suffix.lower() != '.json':
+        if output_path.suffix.lower() not in {'.json', '.jsonl'}:
             output_path = output_path.with_suffix('.json')
 
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(results, f, ensure_ascii=False, indent=2)
+        temporary = output_path.with_suffix(output_path.suffix + ".tmp")
+        with open(temporary, 'w', encoding='utf-8') as f:
+            if output_path.suffix.lower() == '.jsonl':
+                for result in results:
+                    f.write(json.dumps(result, ensure_ascii=False) + "\n")
+            else:
+                json.dump(results, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+        temporary.replace(output_path)
 
         if self.config.verbose:
             print(f"Results saved to: {output_path}")
@@ -245,9 +253,13 @@ class OmniGenEngine:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # 确保输出文件为JSON格式
-        if output_path.suffix.lower() != '.json':
+        if output_path.suffix.lower() not in {'.json', '.jsonl'}:
             output_path = output_path.with_suffix('.json')
+
+        if output_path.suffix.lower() == '.jsonl':
+            with open(output_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(new_result, ensure_ascii=False) + "\n")
+            return
 
         # Load existing results if file exists
         existing_results = []
@@ -276,6 +288,11 @@ class OmniGenEngine:
         # Note: dataset should already be loaded via load_dataset() or load_from_json()
         if self.dataset is None:
             self.load_dataset()
+        if self.config.generator_config.get("overwrite_output", False):
+            output_path = Path(self.config.output_path)
+            if output_path.suffix.lower() not in {'.json', '.jsonl'}:
+                output_path = output_path.with_suffix('.json')
+            output_path.unlink(missing_ok=True)
         results = await self.generate(use_sequential=use_sequential)
         if results:
             self.save_results(results)

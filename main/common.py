@@ -16,6 +16,7 @@ DEFAULT_CONFIGS = {
     "image_pair": "src/config/image_pair.yaml",
     "qa_pair": "src/config/qa_pair.yaml",
     "cot": "src/config/cot.yaml",
+    "sdf_caption": "src/config/sdf_caption.yaml",
 }
 
 # Supported data types

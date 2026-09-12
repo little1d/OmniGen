@@ -7,6 +7,8 @@ from ..config.config import ValidatorConfig
 class BaseValidator(ABC):
     """Base class for all validators"""
 
+    requires_model: bool = False
+
     def __init__(self, model_client, validation_config: ValidatorConfig):
         self.model_client = model_client
         self.validation_config = validation_config

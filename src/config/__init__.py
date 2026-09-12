@@ -1,4 +1,4 @@
-from .config import ModelConfig, OmniGenConfig
+from .config import ModelConfig, OmniGenConfig, ValidatorConfig
 
 
-__all__ = ["ModelConfig", "OmniGenConfig"]
+__all__ = ["ModelConfig", "OmniGenConfig", "ValidatorConfig"]

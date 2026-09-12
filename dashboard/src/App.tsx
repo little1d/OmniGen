@@ -114,16 +114,26 @@ function MoleculeList({
 
 function FactsView({ molecule }: { molecule: MoleculeDetail }) {
   const facts = molecule.facts ?? {}
-  const shape = (facts.shape_descriptors_for_current_conformer ?? {}) as Record<string, unknown>
+  const composition = (facts.composition ?? {}) as Record<string, unknown>
+  const topology = (facts.topology ?? {}) as Record<string, unknown>
+  const geometry = (facts.geometry ?? facts.shape_descriptors_for_current_conformer ?? {}) as Record<
+    string,
+    unknown
+  >
+  const elementCounts = (composition.element_counts ?? {}) as Record<string, number>
+  const heavyAtoms = Object.entries(elementCounts)
+    .filter(([element]) => element !== 'H')
+    .reduce((total, [, count]) => total + count, 0)
+  const radius = geometry.radius_of_gyration_angstrom ?? geometry.radius_of_gyration_A
   const cards = [
-    ['重原子', facts.heavy_atom_count],
-    ['显式氢', facts.explicit_h_count],
-    ['氢键供体', facts.hbond_donors],
-    ['氢键受体', facts.hbond_acceptors],
-    ['可旋转键', facts.rotatable_bonds],
-    ['环 / 芳香环', `${facts.ring_count ?? '–'} / ${facts.aromatic_ring_count ?? '–'}`],
-    ['回转半径', shape.radius_of_gyration_A ? `${shape.radius_of_gyration_A} Å` : '–'],
-    ['非球面性', shape.asphericity],
+    ['重原子', facts.heavy_atom_count ?? (heavyAtoms || '–')],
+    ['氢原子', facts.explicit_h_count ?? elementCounts.H],
+    ['形式电荷', facts.formal_charge ?? composition.formal_charge],
+    ['环数量', facts.ring_count ?? topology.ring_count],
+    ['环尺寸', facts.ring_sizes ?? topology.ring_sizes],
+    ['手性中心', facts.chiral_center_count ?? topology.chiral_center_count],
+    ['回转半径', radius ? `${radius} Å` : '–'],
+    ['非球形度', geometry.asphericity],
   ]
   return (
     <>

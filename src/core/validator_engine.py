@@ -14,7 +14,6 @@ class ValidatorEngine:
         self.config = config
         self.validation_config = config.validation_config
         self.model_client = None
-        self._init_model_client()
 
     def _init_model_client(self):
         """Initialize model client - reuse generation engine logic"""
@@ -30,9 +29,14 @@ class ValidatorEngine:
             print("Validation is disabled")
             return {"enabled": False}
 
-        # Load data from file
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        path = Path(file_path)
+        with path.open('r', encoding='utf-8') as f:
+            if path.suffix.lower() == '.jsonl':
+                data = [json.loads(line) for line in f if line.strip()]
+            else:
+                data = json.load(f)
+        if not isinstance(data, list):
+            raise ValueError("Validation input must be a JSON array or JSONL file")
 
         if self.validation_config.verbose:
             print(f"Validating {len(data)} samples from {file_path}")
@@ -41,11 +45,14 @@ class ValidatorEngine:
         validator = create_validator(data_type, self.model_client, self.validation_config)
         if validator is None:
             raise ValueError(f"No validator found for data type: {data_type}")
+        if validator.requires_model:
+            self._init_model_client()
+            validator.model_client = self.model_client
 
         # Validate all samples
         results = []
         for i, sample in enumerate(data):
-            sample["sample_id"] = sample.get("sample_id", f"sample_{i}")
+            sample["sample_id"] = sample.get("sample_id") or sample.get("id") or f"sample_{i}"
 
             if self.validation_config.verbose:
                 print(f"Validating sample {i+1}/{len(data)}: {sample['sample_id']}")

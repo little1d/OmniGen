@@ -1,7 +1,7 @@
 import os
 import json
 import yaml
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Dict, Any
 from pathlib import Path
 from dotenv import load_dotenv
@@ -172,6 +172,8 @@ class OmniGenConfig:
 
         # 递归替换环境变量
         data = resolve_env_vars(data)
+        if isinstance(data.get("validation_config"), dict):
+            data["validation_config"] = ValidatorConfig(**data["validation_config"])
         return cls(**data)
 
     def to_file(self, config_path: str) -> None:
@@ -185,6 +187,7 @@ class OmniGenConfig:
             "generator_config": self.generator_config,
             "model_type": self.model_type,
             "model_config": self.model_config,
+            "validation_config": asdict(self.validation_config),
             "num_samples": self.num_samples,
             "output_path": self.output_path,
             "verbose": self.verbose,
