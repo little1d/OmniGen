@@ -1,8 +1,8 @@
 import json
-import asyncio
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from ..config import OmniGenConfig
+from ..models import create_model
 from ..validators.registry import create_validator
 from ..validators.result import ValidatorResult
 
@@ -19,36 +19,10 @@ class ValidatorEngine:
     def _init_model_client(self):
         """Initialize model client - reuse generation engine logic"""
         model_type = self.config.model_type.lower()
-        if model_type == "internvl":
-            try:
-                from ..models import InternVL
-
-                model_config = self.config.model_config
-                self.model_client = InternVL(
-                    model_name=model_config.get("model_name"),
-                    api_key=model_config.get("api_key"),
-                    base_url=model_config.get("base_url"),
-                )
-            except ImportError as e:
-                raise ImportError(f"Failed to import InternVL: {e}")
-            except Exception as e:
-                raise RuntimeError(f"InternVL initialization failed: {e}")
-        elif model_type == "interns1":
-            try:
-                from ..models import InternS1
-
-                model_config = self.config.model_config
-                self.model_client = InternS1(
-                    model_name=model_config.get("model_name"),
-                    api_key=model_config.get("api_key"),
-                    base_url=model_config.get("base_url"),
-                )
-            except ImportError as e:
-                raise ImportError(f"Failed to import InternS1: {e}")
-            except Exception as e:
-                raise RuntimeError(f"InternS1 initialization failed: {e}")
-        else:
-            raise ValueError(f"Unsupported model type: {model_type}")
+        try:
+            self.model_client = create_model(model_type, self.config.model_config)
+        except Exception as error:
+            raise RuntimeError(f"Failed to initialize model client '{model_type}': {error}") from error
 
     async def validate_file(self, file_path: str, data_type: str) -> Dict[str, Any]:
         """Validate entire output file"""

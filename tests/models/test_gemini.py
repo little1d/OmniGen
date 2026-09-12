@@ -23,11 +23,14 @@ class TestGemini:
         print(f"Base URL: {config.gemini_base_url}")
         print(f"Model Name: {config.gemini_model_name}")
 
-        # At least default values should exist
-        assert config.gemini_base_url is not None
+        assert config.gemini_api_key == (os.getenv("GEMINI_API_KEY") or os.getenv("OPENROUTER_API_KEY"))
+        assert config.gemini_base_url == os.getenv("GEMINI_BASE_URL")
         assert config.gemini_model_name is not None
 
-    @pytest.mark.skipif(not os.getenv("GEMINI_API_KEY"), reason="Requires GEMINI_API_KEY environment variable")
+    @pytest.mark.skipif(
+        not all(os.getenv(name) for name in ("GEMINI_API_KEY", "GEMINI_BASE_URL", "GEMINI_MODEL_NAME")),
+        reason="Requires complete Gemini API configuration",
+    )
     def test_model_real_api_call(self):
         """Test real API call"""
         # Validate environment variable

@@ -31,19 +31,25 @@ def resolve_env_vars(obj):
 
 @dataclass
 class ModelConfig:
+    # ModelHub API Configuration
+    modelhub_ak: str | None = os.getenv("MODELHUB_AK")
+    modelhub_endpoint: str | None = os.getenv("MODELHUB_ENDPOINT")
+    modelhub_model_name: str | None = os.getenv("MODELHUB_MODEL_NAME")
+    modelhub_log_id: str | None = os.getenv("MODELHUB_LOG_ID")
+
     # InternVL API Configuration
-    internvl_api_key: str = os.getenv("INTERNVL_API_KEY")
-    internvl_base_url: str = os.getenv("INTERNVL_BASE_URL")
-    internvl_model_name: str = os.getenv("INTERNVL_MODEL_NAME")
+    internvl_api_key: str | None = os.getenv("INTERNVL_API_KEY")
+    internvl_base_url: str | None = os.getenv("INTERNVL_BASE_URL")
+    internvl_model_name: str | None = os.getenv("INTERNVL_MODEL_NAME")
 
     # InternS1 API Configuration
-    interns1_api_key: str = os.getenv("INTERNS1_API_KEY")
-    interns1_base_url: str = os.getenv("INTERNS1_BASE_URL")
-    interns1_model_name: str = os.getenv("INTERNS1_MODEL_NAME")
+    interns1_api_key: str | None = os.getenv("INTERNS1_API_KEY")
+    interns1_base_url: str | None = os.getenv("INTERNS1_BASE_URL")
+    interns1_model_name: str | None = os.getenv("INTERNS1_MODEL_NAME")
 
     # Gemini API Configuration (via OpenRouter)
-    gemini_api_key: str = os.getenv("GEMINI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
-    gemini_base_url: str = os.getenv("GEMINI_BASE_URL", "https://openrouter.ai/api/v1")
+    gemini_api_key: str | None = os.getenv("GEMINI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+    gemini_base_url: str | None = os.getenv("GEMINI_BASE_URL")
     gemini_model_name: str = os.getenv("GEMINI_MODEL_NAME", "google/gemini-2.5-pro")
 
 
@@ -120,7 +126,14 @@ class OmniGenConfig:
     def _get_model_config(self, model_type: str) -> Dict[str, Any]:
         model_configs = ModelConfig()
 
-        if model_type.lower() == "internvl":
+        if model_type.lower() == "modelhub":
+            return {
+                "ak": model_configs.modelhub_ak,
+                "endpoint": model_configs.modelhub_endpoint,
+                "model_name": model_configs.modelhub_model_name,
+                "log_id": model_configs.modelhub_log_id,
+            }
+        elif model_type.lower() == "internvl":
             return {
                 "api_key": model_configs.internvl_api_key,
                 "base_url": model_configs.internvl_base_url,

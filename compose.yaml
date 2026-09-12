@@ -1,0 +1,16 @@
+services:
+  review:
+    build: .
+    ports:
+      - "127.0.0.1:${OMNIGEN_REVIEW_PORT:-8000}:8000"
+    environment:
+      OMNIGEN_DATA_PATH: "/input/${OMNIGEN_DATA_FILE:-items.json}"
+      OMNIGEN_REVIEW_DB: /data/reviews/reviews.sqlite3
+      OMNIGEN_DATASET_ID: "${OMNIGEN_DATASET_ID:-}"
+    volumes:
+      - "${OMNIGEN_DATA_DIR:-./dashboard/sample-data}:/input:ro"
+      - omnigen-reviews:/data/reviews
+    restart: unless-stopped
+
+volumes:
+  omnigen-reviews:

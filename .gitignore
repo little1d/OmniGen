@@ -1,5 +1,8 @@
 # Build artifacts
 /dist/
+/dashboard/dist/
+/dashboard/node_modules/
+*.tsbuildinfo
 
 # Virtual environments & Python cache
 *.venv/
@@ -18,6 +21,7 @@
 # Local data & playground
 data/
 playground/
+/review-data/
 /seed_datasets
 /output
 **/*_output/

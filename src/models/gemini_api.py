@@ -17,7 +17,7 @@ class Gemini(BaseAPIModel):
         # Set default values for Gemini
         model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "google/gemini-2.5-pro")
         api_key = api_key or os.getenv("GEMINI_API_KEY")
-        base_url = base_url or os.getenv("GEMINI_BASE_URL", "https://openrouter.ai/api/v1")
+        base_url = base_url or os.getenv("GEMINI_BASE_URL")
 
         # Initialize parent class
         super().__init__(model_name=model_name, api_key=api_key, base_url=base_url, **kwargs)

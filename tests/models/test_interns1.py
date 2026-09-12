@@ -8,7 +8,7 @@ project_root = Path(__file__).parent.parent.parent
 env_path = project_root / ".env"
 load_dotenv(env_path)
 
-from src.models.interns1_api import InternS1
+from src.models.intern_api import InternS1
 
 
 class TestInternS1:
@@ -22,11 +22,14 @@ class TestInternS1:
         print(f"Base URL: {config.interns1_base_url}")
         print(f"Model Name: {config.interns1_model_name}")
 
-        # At least default values should exist
-        assert config.interns1_base_url is not None
-        assert config.interns1_model_name is not None
+        assert config.interns1_api_key == os.getenv("INTERNS1_API_KEY")
+        assert config.interns1_base_url == os.getenv("INTERNS1_BASE_URL")
+        assert config.interns1_model_name == os.getenv("INTERNS1_MODEL_NAME")
 
-    @pytest.mark.skipif(not os.getenv("INTERNS1_API_KEY"), reason="Requires INTERNS1_API_KEY environment variable")
+    @pytest.mark.skipif(
+        not all(os.getenv(name) for name in ("INTERNS1_API_KEY", "INTERNS1_BASE_URL", "INTERNS1_MODEL_NAME")),
+        reason="Requires complete InternS1 API configuration",
+    )
     def test_model_real_api_call(self):
         """Test real API call"""
         # Validate environment variable

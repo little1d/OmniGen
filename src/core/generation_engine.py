@@ -1,4 +1,3 @@
-import asyncio
 import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -6,7 +5,7 @@ import random
 from ..config import OmniGenConfig
 from ..data_loaders import Dataset, DataSample, create_loader_for_source
 from ..generators.base import create_generator
-from ..models.base import BaseModel
+from ..models import create_model
 
 
 class OmniGenEngine:
@@ -26,61 +25,10 @@ class OmniGenEngine:
         model_type = self.config.model_type.lower()
         if self.config.verbose:
             print(f"Initializing model client: {model_type}")
-        if model_type == "internvl":
-            try:
-                from ..models import InternVL
-
-                model_config = self.config.model_config
-                self.model_client = InternVL(
-                    model_name=model_config.get("model_name"),
-                    api_key=model_config.get("api_key"),
-                    base_url=model_config.get("base_url"),
-                )
-            except ImportError as e:
-                print(f"Warning: Failed to import InternVL: {e}")
-                self.model_client = None
-            except Exception as e:
-                print(f"Warning: InternVL initialization failed: {e}")
-                self.model_client = None
-        elif model_type == "interns1":
-            try:
-                from ..models import InternS1
-
-                model_config = self.config.model_config
-                if self.config.verbose:
-                    print(f"InternS1 config: {model_config}")
-                self.model_client = InternS1(
-                    model_name=model_config.get("model_name"),
-                    api_key=model_config.get("api_key"),
-                    base_url=model_config.get("base_url"),
-                )
-                if self.config.verbose:
-                    print(f"InternS1 client initialized successfully")
-            except ImportError as e:
-                print(f"Warning: Failed to import InternS1: {e}")
-                self.model_client = None
-            except Exception as e:
-                print(f"Warning: InternS1 initialization failed: {e}")
-                self.model_client = None
-        elif model_type == "gemini":
-            try:
-                from ..models import Gemini
-
-                model_config = self.config.model_config
-                self.model_client = Gemini(
-                    model_name=model_config.get("model_name"),
-                    api_key=model_config.get("api_key"),
-                    base_url=model_config.get("base_url"),
-                )
-            except ImportError as e:
-                print(f"Warning: Failed to import Gemini: {e}")
-                self.model_client = None
-            except Exception as e:
-                print(f"Warning: Gemini initialization failed: {e}")
-                self.model_client = None
-        else:
-            print(f"Warning: Unsupported model type: {model_type}, setting model_client to None")
-            self.model_client = None
+        try:
+            self.model_client = create_model(model_type, self.config.model_config)
+        except Exception as error:
+            raise RuntimeError(f"Failed to initialize model client '{model_type}': {error}") from error
 
     def _init_generator(self):
         """Initialize generator."""

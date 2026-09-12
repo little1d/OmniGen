@@ -1,0 +1,11 @@
+.git
+.pytest_cache
+.venv
+__pycache__
+*.pyc
+.env
+dashboard/dist
+dashboard/node_modules
+review-data
+output
+omnigenlog
