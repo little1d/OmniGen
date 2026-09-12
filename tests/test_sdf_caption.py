@@ -56,6 +56,9 @@ def test_prompt_contains_smiles_facts_and_sdf():
     assert SDF.strip() in user_prompt
     assert '只输出 JSON 对象：{"caption":"..."}' in user_prompt
     assert "reasoning_trace" not in user_prompt
+    assert "该分子是一种" not in user_prompt
+    assert "总体而言" not in user_prompt
+    assert "不是可拼接的模板" in user_prompt
 
 
 def test_response_validation_is_flexible_but_grounded():
